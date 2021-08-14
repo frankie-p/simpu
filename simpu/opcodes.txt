@@ -1,0 +1,4 @@
+﻿0x00				nop			no operation - do nothing
+
+jumps
+0x01 <ADDRESS>		jmp			jump to instruction at given address
