@@ -11,24 +11,46 @@ namespace simpu.parser
 
     public class ValueParser : ParserBase
     {
-        private static readonly Regex m_nameRegex = new Regex("([a-zA-Z][a-zA-Z0-9]*)|([0-9]+)");
 
         public static bool TryParse(string input, ref int index, out ValueToken token)
         {
-            var match = m_nameRegex.Match(input, index);
+            var copy = index;
 
-            if (!match.Success)
+            if (ConstantParser.TryParse(input, ref copy, out var constantToken))
             {
-                token = null;
-                return false;
+                token = new ValueToken
+                {
+                    Constant = constantToken
+                };
+
+                index = copy;
+                return true;
             }
 
-            index += match.Value.Length;
-            token = new ValueToken
+            if (MethodCallParser.TryParse(input, ref copy, out var methodCallToken))
             {
-                Value = match.Value  
-            };
-            return true;
+                token = new ValueToken
+                {
+                    MethodCall = methodCallToken
+                };
+
+                index = copy;
+                return true;
+            }
+
+            if (VariableParser.TryParse(input, ref copy, out var variableToken))
+            {
+                token = new ValueToken
+                {
+                    Variable = variableToken
+                };
+
+                index = copy;
+                return true;
+            }
+
+            token = null;
+            return false;
         }
     }
 }

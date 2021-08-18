@@ -7,15 +7,11 @@ using System.Threading.Tasks;
 namespace simpu.tokenizer
 {
 
-    public class MethodToken
+    public class MethodCallToken : TokenBase
     {
 
         public string Name { get; set; }
 
-        public string ReturnType { get; set; }
-
-        public List<ValueToken> Parameters { get; set; }
-
-        public BlockToken Block { get; set; }
+        public List<ValueToken> Parameter { get; set; }
     }
 }

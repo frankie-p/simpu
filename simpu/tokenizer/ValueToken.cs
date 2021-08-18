@@ -10,8 +10,16 @@ namespace simpu.tokenizer
     public class ValueToken : TokenBase
     {
 
-        public string Value { get; set; }
+        public ConstantToken Constant { get; set; }
 
-        public bool IsNumber => int.TryParse(Value, out var _);
+        public VariableToken Variable { get; set; }
+
+        public MethodCallToken MethodCall { get; set; }
+
+        public bool IsConstant => Constant != null;
+
+        public bool IsVariable => Variable != null;
+
+        public bool IsMethodCall => MethodCall != null;
     }
 }

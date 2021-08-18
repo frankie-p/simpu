@@ -3,6 +3,7 @@ using simpu.simulation;
 using simpu.tokenizer;
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace simpu
 {

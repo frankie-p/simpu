@@ -66,12 +66,6 @@ namespace simpu.parser
 
         private static bool TryParseWhileCondition(string input, ref int index, out TokenBase token)
         {
-            if (ConditionParser.TryParse(input, ref index, out var conditionToken))
-            {
-                token = conditionToken;
-                return true;
-            }
-
             if (ValueParser.TryParse(input, ref index, out var valueToken))
             {
                 token = valueToken;

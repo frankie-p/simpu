@@ -10,17 +10,14 @@ namespace simpu.parser
 
     public abstract class ParserBase
     {
-        
+        protected static readonly char[] TrimmingCharacters = { ' ', '\t', '\n' };
+
+        protected static bool IsTrimmingChar(string input, int index) => TrimmingCharacters.Contains(input[index]);
 
         protected static void Trim(string input, ref int index)
         {
-            while (true)
+            while (IsTrimmingChar(input, index))
             {
-                var c = input[index];
-
-                if (c != ' ' && c != '\t' && c != '\n')
-                    break;
-
                 index++;
             }
         }
@@ -32,6 +29,20 @@ namespace simpu.parser
 
             index++;
             return true;
+        }
+
+        protected static bool TryChar(string input, ref int index, string chars)
+        {
+            for (var i = 0; i < chars.Length; i++)
+            {
+                if (input[index] == chars[i])
+                {
+                    index++;
+                    return true;
+                }
+            }
+
+            return false;           
         }
 
         protected static bool TryString(string input, ref int index, string str)

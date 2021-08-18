@@ -8,21 +8,13 @@ using System.Threading.Tasks;
 namespace simpu.parser
 {
 
-    public class MethodParser : ParserBase
+    public class MethodCallParser : ParserBase
     {
 
-
-        public bool TryParse(string input, ref int index, out MethodToken token)
+        public static bool TryParse(string input, ref int index, out MethodCallToken token)
         {
             token = null;
             var copy = index;
-
-            Trim(input, ref copy);
-
-            if (!VariableParser.TryParse(input, ref copy, out var returnToken))
-                return false;
-
-            Trim(input, ref copy);
 
             if (!VariableParser.TryParse(input, ref copy, out var nameToken))
                 return false;
@@ -32,15 +24,10 @@ namespace simpu.parser
             if (!ParameterParser.TryParse(input, ref copy, out var parameterTokens))
                 return false;
 
-            if (!BlockParser.TryParse(input, ref copy, out var blockToken))
-                return false;            
-
-            token = new MethodToken
+            token = new MethodCallToken
             {
                 Name = nameToken.Name,
-                ReturnType = returnToken.Name,
-                Parameters = parameterTokens,
-                Block = blockToken
+                Parameter = parameterTokens
             };
 
             index = copy;

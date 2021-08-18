@@ -20,12 +20,12 @@ namespace simpu.parser
 
             Trim(input, ref copy);
 
-            if (!ValueParser.TryParse(input, ref copy, out var typeToken))
+            if (!VariableParser.TryParse(input, ref copy, out var typeToken))
                 return false;
 
             Trim(input, ref copy);
 
-            if (!ValueParser.TryParse(input, ref copy, out var nameToken))
+            if (!VariableParser.TryParse(input, ref copy, out var nameToken))
                 return false;
 
             Trim(input, ref copy);
@@ -36,24 +36,17 @@ namespace simpu.parser
 
                 if (!ValueParser.TryParse(input, ref copy, out initToken))
                     return false;
-
-                Trim(input, ref copy);
             }
 
-            if (TryChar(input, ref copy, ';'))
+            token = new DefinitionToken
             {
-                token = new DefinitionToken
-                {
-                    Type = typeToken.Value,
-                    Name = nameToken.Value,
-                    InitialValue = initToken
-                };
+                Type = typeToken.Name,
+                Name = nameToken.Name,
+                InitialValue = initToken
+            };
 
-                index = copy;
-                return true;
-            }
-
-            return false;
+            index = copy;
+            return true;
         }
     }
 }

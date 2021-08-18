@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 namespace simpu.tokenizer
 {
 
-    public class ParameterToken
+    public class VariableToken : TokenBase
     {
+
+        public string Name { get; set; }
     }
 }

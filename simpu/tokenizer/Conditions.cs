@@ -13,6 +13,7 @@ namespace simpu.tokenizer
         GreaterEqual,
         Lesser,
         LesserEqual,
-        Equal
+        Equal,
+        Unequal
     }
 }

@@ -46,11 +46,27 @@ namespace simpu.parser
                 {
                     tokens.Add(definitionToken);
                 }
+                else if (MethodCallParser.TryParse(input, ref copy, out var methodCallToken))
+                {
+                    tokens.Add(methodCallToken);
+                }
                 else
                 {
                     throw new Exception();
                 }
+
+                if (!ParseSemikolon(input, ref copy))
+                    throw new Exception("Expected semikolon");
+
+                while (ParseSemikolon(input, ref copy));
             };
+        }
+
+        private static bool ParseSemikolon(string input, ref int index)
+        {
+            Trim(input, ref index);
+
+            return TryChar(input, ref index, ';');
         }
     }
 }
