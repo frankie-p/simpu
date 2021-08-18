@@ -16,7 +16,7 @@ namespace simpu.parser
             token = null;
             var copy = index;
 
-            var condition = Conditions.None;
+            Conditions condition;
 
             Trim(input, ref copy);
 
@@ -62,6 +62,7 @@ namespace simpu.parser
                 Right = rightToken,
             };
 
+            index = copy;
             return true;
         }
     }
