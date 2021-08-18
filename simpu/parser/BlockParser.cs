@@ -42,6 +42,10 @@ namespace simpu.parser
                 {
                     tokens.Add(whileToken);
                 }
+                else if (DefinitionParser.TryParse(input, ref copy, out var definitionToken))
+                {
+                    tokens.Add(definitionToken);
+                }
                 else
                 {
                     throw new Exception();

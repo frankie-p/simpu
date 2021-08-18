@@ -9,7 +9,6 @@ namespace simpu.tokenizer
 
     public enum Conditions
     {
-        None,
         Greater,
         GreaterEqual,
         Lesser,
