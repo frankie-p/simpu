@@ -25,6 +25,8 @@ namespace simpu.parser
 
             while (true)
             {
+                var semikolonRequired = false;
+
                 Trim(input, ref copy);
 
                 if (TryChar(input, ref copy, '}'))
@@ -45,28 +47,37 @@ namespace simpu.parser
                 else if (DefinitionParser.TryParse(input, ref copy, out var definitionToken))
                 {
                     tokens.Add(definitionToken);
+                    semikolonRequired = true;
                 }
                 else if (MethodCallParser.TryParse(input, ref copy, out var methodCallToken))
                 {
                     tokens.Add(methodCallToken);
+                    semikolonRequired = true;
                 }
                 else
                 {
                     throw new Exception();
                 }
 
-                if (!ParseSemikolon(input, ref copy))
-                    throw new Exception("Expected semikolon");
-
-                while (ParseSemikolon(input, ref copy));
+                TrimSemikolons(input, ref copy, semikolonRequired);
             };
         }
 
-        private static bool ParseSemikolon(string input, ref int index)
+        private static void TrimSemikolons(string input, ref int index, bool required)
         {
             Trim(input, ref index);
 
-            return TryChar(input, ref index, ';');
+            if (!TryChar(input, ref index, ';'))
+            {
+                if (required)
+                    throw new Exception("Expected semikolon");
+            }
+
+            do
+            {
+                Trim(input, ref index);
+            }
+            while (TryChar(input, ref index, ';'));
         }
     }
 }
