@@ -40,14 +40,18 @@ namespace Simpu.Parser
                     return true;
                 }
 
-                if (WhileParser.TryParse(input, ref copy, out var whileToken))
-                {
-                    tokens.Add(whileToken);
-                }
-                else if (DefinitionParser.TryParse(input, ref copy, out var definitionToken))
+                if (DefinitionParser.TryParse(input, ref copy, out var definitionToken))
                 {
                     tokens.Add(definitionToken);
                     semikolonRequired = true;
+                }
+                else if (IfParser.TryParse(input, ref copy, out var ifToken))
+                {
+                    tokens.Add(ifToken);
+                }
+                else if (WhileParser.TryParse(input, ref copy, out var whileToken))
+                {
+                    tokens.Add(whileToken);
                 }
                 else if (MethodCallParser.TryParse(input, ref copy, out var methodCallToken))
                 {
