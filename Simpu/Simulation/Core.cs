@@ -47,8 +47,8 @@ namespace Simpu.Simulation
             {
                 case 0x00: // nop
                     break;
-                case 0x01: // jmp
-                    m_instructionPointer = BitConverter.ToUInt32(m_instruction, 1);
+                case 0x01: // relative jmp
+                    m_instructionPointer = m_instructionPointer + BitConverter.ToUInt32(m_instruction, 1);
                     return;
                 default:
                     throw new Exception("hardware panic");
