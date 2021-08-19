@@ -12,7 +12,7 @@ namespace Simpu.Parser
     {
 
 
-        public bool TryParse(string input, ref int index, out MethodToken token)
+        public static bool TryParse(string input, ref int index, out MethodToken token)
         {
             token = null;
             var copy = index;

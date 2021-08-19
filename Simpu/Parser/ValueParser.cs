@@ -27,7 +27,7 @@ namespace Simpu.Parser
                 return true;
             }
 
-            if (MethodCallParser.TryParse(input, ref copy, out var methodCallToken))
+            if (MethodCallParser.TryParse(input, ref copy, false, out var methodCallToken))
             {
                 token = new ValueToken
                 {

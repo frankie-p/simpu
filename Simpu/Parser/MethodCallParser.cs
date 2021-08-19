@@ -11,7 +11,7 @@ namespace Simpu.Parser
     public class MethodCallParser : ParserBase
     {
 
-        public static bool TryParse(string input, ref int index, out MethodCallToken token)
+        public static bool TryParse(string input, ref int index, bool semikolonRequired, out MethodCallToken token)
         {
             token = null;
             var copy = index;
@@ -23,6 +23,12 @@ namespace Simpu.Parser
 
             if (!ParameterParser.TryParse(input, ref copy, out var parameterTokens))
                 return false;
+
+            if (semikolonRequired)
+            {
+                if (!TryTrimSemikolons(input, ref copy))
+                    return false;
+            }
 
             token = new MethodCallToken
             {

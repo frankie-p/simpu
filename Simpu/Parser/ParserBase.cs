@@ -12,11 +12,11 @@ namespace Simpu.Parser
     {
         protected static readonly char[] TrimmingCharacters = { ' ', '\t', '\n' };
 
-        protected static bool IsTrimmingChar(string input, int index) => TrimmingCharacters.Contains(input[index]);
+        protected static bool IsTrimmableChar(string input, int index) => TrimmingCharacters.Contains(input[index]);
 
         protected static void Trim(string input, ref int index)
         {
-            while (IsTrimmingChar(input, index))
+            while (IsTrimmableChar(input, index))
             {
                 index++;
             }
@@ -59,6 +59,24 @@ namespace Simpu.Parser
             }
 
             index = copy;
+            return true;
+        }
+
+        protected static bool TryTrimSemikolons(string input, ref int index)
+        {
+            var copy = index;
+
+            Trim(input, ref copy);
+
+            if (!TryChar(input, ref index, ';'))
+                return false;
+
+            do
+            {
+                Trim(input, ref index);
+            }
+            while (TryChar(input, ref index, ';'));
+
             return true;
         }
     }

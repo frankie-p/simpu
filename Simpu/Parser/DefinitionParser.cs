@@ -38,6 +38,9 @@ namespace Simpu.Parser
                     return false;
             }
 
+            if (!TryTrimSemikolons(input, ref copy))
+                return false;
+
             token = new DefinitionToken
             {
                 Type = typeToken.Name,
