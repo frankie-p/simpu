@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace simpu.tokenizer
+namespace Simpu.Tokenizer
 {
 
     public class MethodToken

@@ -1,4 +1,4 @@
-﻿using simpu.tokenizer;
+﻿using Simpu.Tokenizer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace simpu.parser
+namespace Simpu.Parser
 {
 
     public class ConstantParser : ParserBase

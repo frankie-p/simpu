@@ -1,6 +1,6 @@
-﻿using simpu.parser;
-using simpu.simulation;
-using simpu.tokenizer;
+﻿using Simpu.Parser;
+using Simpu.Simulation;
+using Simpu.Tokenizer;
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
