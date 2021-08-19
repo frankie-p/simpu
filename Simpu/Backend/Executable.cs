@@ -63,8 +63,7 @@ namespace Simpu.Backend
             {
                 if (instruction.Size != 0)
                 {
-                    sb.Append($"0x{instruction.Address:X}");
-                    sb.Append(' ');
+                    sb.Append($"0x{instruction.Address:X4}  ");
                 }
 
                 if (instruction == m_instructions.Last())

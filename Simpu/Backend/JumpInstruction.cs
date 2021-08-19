@@ -32,10 +32,10 @@ namespace Simpu.Backend
         public override string ToString()
         {
             var labelAddress = Executable.TryGetAddressOfLabel(m_label, out var address)
-                ? $"0x{address:X}"
+                ? $"0x{address:X4}"
                 : $"<NUL>";
 
-            return $"JMP {labelAddress} ({m_label})";
+            return $"JMP {labelAddress} # {m_label}";
         }
     }
 }
