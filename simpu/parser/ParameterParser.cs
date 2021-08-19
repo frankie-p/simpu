@@ -21,18 +21,26 @@ namespace Simpu.Parser
 
             tokens = new List<ValueToken>();
 
+            Trim(input, ref copy);
+
             if (CheckClosingBracket(input, ref index, copy, ref tokens))
                 return true;
 
             while (true)
             {
+                Trim(input, ref copy);
+                
                 if (!ValueParser.TryParse(input, ref copy, out var parameterToken))
                     throw new Exception($"Excpected parameter but got '{input.Substring(copy).Take(10)}'");
 
                 tokens.Add(parameterToken);
 
+                Trim(input, ref copy);
+
                 if (CheckClosingBracket(input, ref index, copy, ref tokens))
                     return true;
+
+                Trim(input, ref copy);
 
                 if (TryChar(input, ref copy, ','))
                     continue;
