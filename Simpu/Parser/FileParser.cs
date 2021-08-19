@@ -36,8 +36,8 @@ namespace Simpu.Parser
 
             var token = new FileToken
             {
-                Definitions = definitions.Any() ? definitions : null,
-                Methods = methods.Any() ? methods : null
+                Definitions = definitions,
+                Methods = methods
             };
 
             return token;

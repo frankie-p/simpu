@@ -18,6 +18,10 @@ namespace Simpu.Tokenizer
 
         public bool IsString => String != null;
 
+        public bool IsInteger => Integer != null;
+
         public bool IsFloat => Float != null;
+
+        public bool IsFalseCondition => (IsInteger && Integer.Value == 0) || (IsFloat && Float.Value == 0);
     }
 }

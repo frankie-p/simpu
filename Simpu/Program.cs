@@ -1,4 +1,5 @@
-﻿using Simpu.Parser;
+﻿using Simpu.Backend;
+using Simpu.Parser;
 using Simpu.Simulation;
 using Simpu.Tokenizer;
 using System;
@@ -13,17 +14,22 @@ namespace simpu
 
         public static void Main(string[] args)
         {
-            var file = File.ReadAllText(@"d:\hw.c").Replace(Environment.NewLine, "\n");
+            var kernel = "int main() { while(1); }";
 
-            // tokenize kernel here
-            var token = FileParser.Parse(file);
+            // tokenize kernel
+            var token = FileParser.Parse(kernel);
 
-            // create memory
-            var memory = new byte[10000000];
+            // compile tokens
+            var exe = Executable.Create(token);
+
+            Console.WriteLine(exe);
+
+            using var memory = new MemoryStream(new byte[10000000]);
+            exe.Write(memory);
 
             // write compiled kernel to memory
 
-            var core = new Core(memory, 0);
+            var core = new Core(memory.ToArray(), 0);
             core.Run();
         }
     }

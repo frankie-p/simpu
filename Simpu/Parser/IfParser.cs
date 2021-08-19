@@ -36,7 +36,7 @@ namespace Simpu.Parser
             token = new IfToken
             {
                 If = ifToken,
-                ElseIfs = elseIfTokens.Any() ? elseIfTokens : null,
+                ElseIfs = elseIfTokens,
                 Else = elseToken
             };
 
