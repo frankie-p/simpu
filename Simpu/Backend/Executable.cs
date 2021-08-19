@@ -132,6 +132,41 @@ namespace Simpu.Backend
             m_instructions.Add(new LabelInstruction(this, labelEnd));
         }
 
+        public int GetAddressOffset(Instruction from, string label)
+        {
+            var labelFound = false;
+            var selfFound = false;
+            var offset = 0;
+
+            foreach (var instruction in m_instructions)
+            {
+                if (instruction is LabelInstruction li && li.Name == label)
+                {
+                    if (selfFound)
+                        break;
+
+                    labelFound = true;
+                }
+                else if (instruction == from)
+                {
+                    if (labelFound)
+                    {
+                        offset *= -1;
+                        break;
+                    }
+
+                    selfFound = true;
+                    offset += instruction.Size;
+                }
+                else if (labelFound && selfFound)
+                {
+                    offset += instruction.Size;
+                }
+            }
+
+            return offset;
+        }
+
         public bool TryGetAddressOfLabel(string label, out int address)
         {
             var li = m_instructions.FirstOrDefault(i => i is LabelInstruction l && l.Name == label);

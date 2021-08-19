@@ -22,20 +22,24 @@ namespace Simpu.Backend
 
         public override void Write(Stream s)
         {
-            if (!Executable.TryGetAddressOfLabel(m_label, out var address))
-                throw new Exception($"Failed to get address of {m_label}");
+            var offset = Executable.GetAddressOffset(this, m_label);
 
             s.WriteByte(0x01);
-            s.Write(BitConverter.GetBytes(address), 0, 4);
+            s.Write(BitConverter.GetBytes(offset), 0, 4);
         }
 
         public override string ToString()
         {
-            var labelAddress = Executable.TryGetAddressOfLabel(m_label, out var address)
-                ? $"0x{address:X4}"
-                : $"<NUL>";
+            string absolute = "<NUL>";
+            string relative = "<NUL>";
 
-            return $"JMP {labelAddress} # {m_label}";
+            if (Executable.TryGetAddressOfLabel(m_label, out var address))
+            {
+                absolute = $"0x{address:X4}";
+                relative = Executable.GetAddressOffset(this, m_label).ToString();
+            }
+
+            return $"JMP {absolute} # {m_label} (relative: {relative})";
         }
     }
 }
