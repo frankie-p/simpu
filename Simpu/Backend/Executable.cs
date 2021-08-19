@@ -98,10 +98,18 @@ namespace Simpu.Backend
                     case BlockToken innerBlock:
                         HandleBlock(innerBlock);
                         break;
+                    case MethodCallToken call:
+                        HandleMethodCall(call);
+                        break;
                     default:
                         throw new Exception($"Unknown block token child: {token}");
                 }
             }
+        }
+
+        private void HandleMethodCall(MethodCallToken call)
+        {
+            // this is going to be the fun part
         }
 
         private void HandleWhile(WhileToken @while)

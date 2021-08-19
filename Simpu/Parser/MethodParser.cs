@@ -29,7 +29,7 @@ namespace Simpu.Parser
 
             Trim(input, ref copy);
 
-            if (!ParameterParser.TryParse(input, ref copy, out var parameterTokens))
+            if (!ParameterParser.TryParse(input, ref copy, true, out var parameterTokens))
                 return false;
 
             if (!BlockParser.TryParse(input, ref copy, out var blockToken))
@@ -39,7 +39,7 @@ namespace Simpu.Parser
             {
                 Name = nameToken.Name,
                 ReturnType = returnToken.Name,
-                Parameters = parameterTokens,
+                Parameters = parameterTokens.Cast<DefinitionToken>().ToList(),
                 Block = blockToken
             };
 

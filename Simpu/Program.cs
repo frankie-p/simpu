@@ -14,7 +14,7 @@ namespace simpu
 
         public static void Main(string[] args)
         {
-            var kernel = "int main() { while(1); }";
+            var kernel = File.ReadAllText("kernel.c").Replace(Environment.NewLine, "\n");
 
             // tokenize kernel
             var token = FileParser.Parse(kernel);

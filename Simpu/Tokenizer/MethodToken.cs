@@ -14,7 +14,7 @@ namespace Simpu.Tokenizer
 
         public string ReturnType { get; set; }
 
-        public List<ValueToken> Parameters { get; set; }
+        public List<DefinitionToken> Parameters { get; set; }
 
         public BlockToken Block { get; set; }
     }

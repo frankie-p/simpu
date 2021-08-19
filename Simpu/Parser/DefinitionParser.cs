@@ -11,7 +11,7 @@ namespace Simpu.Parser
     public class DefinitionParser : ParserBase
     {
 
-        public static bool TryParse(string input, ref int index, out DefinitionToken token)
+        public static bool TryParse(string input, ref int index, bool requiresSemikolon, out DefinitionToken token)
         {
             token = null;
             var copy = index;
@@ -38,7 +38,7 @@ namespace Simpu.Parser
                     return false;
             }
 
-            if (!TryTrimSemikolons(input, ref copy))
+            if (requiresSemikolon && !TryTrimSemikolons(input, ref copy))
                 return false;
 
             token = new DefinitionToken

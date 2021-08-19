@@ -38,7 +38,7 @@ namespace Simpu.Parser
                     return true;
                 }
 
-                if (DefinitionParser.TryParse(input, ref copy, out var definitionToken))
+                if (DefinitionParser.TryParse(input, ref copy, true, out var definitionToken))
                 {
                     tokens.Add(definitionToken);
                 }

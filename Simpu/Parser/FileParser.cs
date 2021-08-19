@@ -24,7 +24,7 @@ namespace Simpu.Parser
                 {
                     methods.Add(method);
                 }
-                else if (DefinitionParser.TryParse(input, ref index, out var definition))
+                else if (DefinitionParser.TryParse(input, ref index, true, out var definition))
                 {
                     definitions.Add(definition);
                 }

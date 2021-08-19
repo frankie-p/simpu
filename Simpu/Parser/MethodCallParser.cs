@@ -21,7 +21,7 @@ namespace Simpu.Parser
 
             Trim(input, ref copy);
 
-            if (!ParameterParser.TryParse(input, ref copy, out var parameterTokens))
+            if (!ParameterParser.TryParse(input, ref copy, false, out var parameterTokens))
                 return false;
 
             if (semikolonRequired)
@@ -33,7 +33,7 @@ namespace Simpu.Parser
             token = new MethodCallToken
             {
                 Name = nameToken.Name,
-                Parameter = parameterTokens
+                Parameter = parameterTokens.Cast<ValueToken>().ToList()
             };
 
             index = copy;
