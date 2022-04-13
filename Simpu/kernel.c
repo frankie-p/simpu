@@ -2,7 +2,7 @@
 
 inline void increment_counter()
 {
-	
+	counter++;
 }
 
 int main()

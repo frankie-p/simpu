@@ -6,3 +6,8 @@ jumps
 
 moves
 0x10 ADDRESS,VALUE	mov			move 4 byte value to 4 byte address
+0x11 ADDRESS,REG	mov			move 4 byte address value to register (2 byte)
+0x12 ADDRESS,REG	mov			move 4 byte register value to address
+
+operations
+0x20 REG,VALUE		add			add 4 byte value on register

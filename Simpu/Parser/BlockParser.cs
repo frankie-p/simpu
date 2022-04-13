@@ -54,6 +54,10 @@ namespace Simpu.Parser
                 {
                     tokens.Add(methodCallToken);
                 }
+                else if (UnaryOperationParser.TryParse(input, ref copy, out var unaryToken))
+                {
+                    tokens.Add(unaryToken);
+                }
                 else
                 {
                     throw new Exception();

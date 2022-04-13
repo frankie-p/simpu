@@ -12,6 +12,7 @@ namespace Simpu.Compiler
     public class ObjectFile
     {
         private readonly List<Instruction> m_instructions = new();
+        private readonly RegisterManager m_registers = new();
         private readonly FileToken m_token;
 
         private int m_whileCount;
@@ -48,14 +49,6 @@ namespace Simpu.Compiler
             return obj;
         }
 
-        public void Write(Stream stream)
-        {
-            foreach (var instruction in m_instructions)
-            {
-                instruction.Write(stream);
-            }
-        }
-
         public void PrintOpCodes()
         {
             foreach (var instruction in m_instructions)
@@ -72,36 +65,18 @@ namespace Simpu.Compiler
             }
         }
 
-        //public override string ToString()
-        //{
-        //    var sb = new StringBuilder();
-
-        //    foreach (var instruction in m_instructions)
-        //    {
-        //        if (instruction.Size != 0)
-        //        {
-        //            sb.Append($"0x{instruction.Address:X4}  ");
-        //        }
-
-        //        if (instruction == m_instructions.Last())
-        //        {
-        //            sb.Append(instruction.ToString());
-        //        }
-        //        else
-        //        {
-        //            sb.AppendLine(instruction.ToString());
-        //        }
-        //    }
-
-        //    return sb.ToString();
-        //}
-
         private void HandleMethod(MethodToken method)
         {
             if (method.Inline)
                 return;
 
             m_instructions.Add(new LabelInstruction(this, method.Name));
+
+            foreach (var param in method.Parameters)
+            {
+                m_registers.Acquire(param.Name);
+            }
+
             HandleBlock(method.Block);
         }
 
@@ -120,9 +95,43 @@ namespace Simpu.Compiler
                     case MethodCallToken call:
                         HandleMethodCall(call);
                         break;
+                    case UnaryOperationToken unary:
+                        UnaryOperation(unary);
+                        break;
                     default:
                         throw new Exception($"Unknown block token child: {token}");
                 }
+            }
+        }
+
+        private void UnaryOperation(UnaryOperationToken token)
+        {
+            if (m_registers.GetOrAcquire(token.Name, out var register))
+            {
+                m_instructions.Add(new MoveAddressToRegisterInstruction(this, token.Name, register));
+                UnaryOperationInner(token, register);
+                m_instructions.Add(new MoveRegisterToAddressInstruction(this, token.Name, register));
+                m_registers.Release(register);
+            }
+            else
+            {
+                UnaryOperationInner(token, register);
+            }
+        }
+
+        private void UnaryOperationInner(UnaryOperationToken token, Registers register)
+        {
+            if (token.IsPostIncrement || token.IsPreIncrement)
+            {
+                m_instructions.Add(new AddInstruction(this, register, 1));
+            }
+            else if ( token.IsPostDecrement || token.IsPreDecrement)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                throw new NotImplementedException();
             }
         }
 
@@ -219,7 +228,7 @@ namespace Simpu.Compiler
                     if (definition.InitialValue.Constant.IsInteger)
                     {
                         m_instructions.Add(
-                            new MoveInstruction(
+                            new MoveValueInstruction(
                                 this,
                                 definition.Name,
                                 definition.InitialValue.Constant.Integer.Value));
