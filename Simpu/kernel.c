@@ -1,12 +1,13 @@
-﻿
-void init_memory(int size)
-{
+﻿int counter = 0;
 
+inline void increment_counter()
+{
+	
 }
 
 int main()
 {
-	init_memory(1000);
+	increment_counter();
 
 	while (1);
 }

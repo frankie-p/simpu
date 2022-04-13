@@ -5,23 +5,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Simpu.Backend
+namespace Simpu.Compiler
 {
 
     public abstract class Instruction
     {
 
-        public Instruction(Executable executable)
+        public Instruction(ObjectFile obj)
         {
-            Executable = executable;
+            Obj = obj;
         }
 
-        public Executable Executable { get; }
+        public ObjectFile Obj { get; }
 
         public int Address { get; set; }
 
         public abstract int Size { get; }
 
         public abstract void Write(Stream s);
+
+        public abstract string ToOpCode();
     }
 }

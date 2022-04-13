@@ -17,5 +17,7 @@ namespace Simpu.Tokenizer
         public List<DefinitionToken> Parameters { get; set; }
 
         public BlockToken Block { get; set; }
+
+        public bool Inline { get; set; }
     }
 }

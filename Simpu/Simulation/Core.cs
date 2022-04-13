@@ -14,6 +14,9 @@ namespace Simpu.Simulation
         private byte[] m_instruction = new byte[10];
         private uint m_instructionPointer;
 
+        private uint CS;
+        private uint DS;
+
         public Core(byte[] memory, uint instructionPointer)
         {
             m_memory = memory;
@@ -35,7 +38,10 @@ namespace Simpu.Simulation
 
             switch (m_instruction[0])
             {
-                case 0x01: // jmp
+                case 0x01: // absolute jmp
+                    Buffer.BlockCopy(m_memory, (int)m_instructionPointer + 1, m_instruction, 1, 4);
+                    return;
+                case 0x02: // relative jmp
                     Buffer.BlockCopy(m_memory, (int)m_instructionPointer + 1, m_instruction, 1, 4);
                     return;
             }
@@ -47,7 +53,10 @@ namespace Simpu.Simulation
             {
                 case 0x00: // nop
                     break;
-                case 0x01: // relative jmp
+                case 0x01: // absolute jmp
+                    m_instructionPointer = DS + m_instructionPointer;
+                    return;
+                case 0x02: // relative jmp
                     m_instructionPointer = m_instructionPointer + BitConverter.ToUInt32(m_instruction, 1);
                     return;
                 default:

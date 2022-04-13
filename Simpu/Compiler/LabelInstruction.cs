@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Simpu.Backend
+namespace Simpu.Compiler
 {
 
     public class LabelInstruction : Instruction
     {
 
-        public LabelInstruction(Executable executable, string name)
-            : base(executable)
+        public LabelInstruction(ObjectFile obj, string name)
+            : base(obj)
         {
             Name = name;
         }
@@ -26,7 +26,7 @@ namespace Simpu.Backend
 
         }
 
-        public override string ToString()
+        public override string ToOpCode()
         {
             return $"{Name}:";
         }

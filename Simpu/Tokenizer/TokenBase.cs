@@ -9,5 +9,11 @@ namespace Simpu.Tokenizer
 
     public abstract class TokenBase
     {
+
+        public bool RequiresStack { get; private set; }
+
+        public int UsedRegisters { get; private set; }
+
+        public int TotalUsedRegisters { get; private set; }
     }
 }

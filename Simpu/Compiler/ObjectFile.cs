@@ -6,45 +6,46 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Simpu.Backend
+namespace Simpu.Compiler
 {
 
-    public class Executable
+    public class ObjectFile
     {
         private readonly List<Instruction> m_instructions = new();
+        private readonly FileToken m_token;
 
         private int m_whileCount;
 
-        private Executable()
+        private ObjectFile(FileToken token)
         {
-
+            m_token = token;
         }
 
-        public static Executable Create(FileToken token)
+        public static ObjectFile Compile(FileToken token)
         {
-            var exe = new Executable();
+            var obj = new ObjectFile(token);
 
-            // for now, the very first instruction is the jump to main entry
-            // added main entry ret jump address and args later
+            obj.PrepareGlobalVariables();
 
-            exe.m_instructions.Add(new JumpInstruction(exe, "main"));
+            // jump to main
+            obj.m_instructions.Add(new JumpAbsoluteInstruction(obj, "main"));
 
             foreach (var method in token.Methods)
             {
-                exe.HandleMethod(method);
+                obj.HandleMethod(method);
             }
 
             // apply addresses
 
             var address = 0;
 
-            foreach (var instruction in exe.m_instructions)
+            foreach (var instruction in obj.m_instructions)
             {
                 instruction.Address = address;
                 address += instruction.Size;
             }
 
-            return exe;
+            return obj;
         }
 
         public void Write(Stream stream)
@@ -55,35 +56,53 @@ namespace Simpu.Backend
             }
         }
 
-        public override string ToString()
+        public void PrintOpCodes()
         {
-            var sb = new StringBuilder();
-
             foreach (var instruction in m_instructions)
             {
-                if (instruction.Size != 0)
+                if (instruction is LabelInstruction)
                 {
-                    sb.Append($"0x{instruction.Address:X4}  ");
-                }
-
-                if (instruction == m_instructions.Last())
-                {
-                    sb.Append(instruction.ToString());
+                    ConsoleHelper.WriteLineColored(instruction.ToOpCode(), ConsoleColor.DarkGray);
                 }
                 else
                 {
-                    sb.AppendLine(instruction.ToString());
+                    Console.Write("  ");
+                    Console.WriteLine(instruction.ToOpCode());
                 }
             }
-
-            return sb.ToString();
         }
+
+        //public override string ToString()
+        //{
+        //    var sb = new StringBuilder();
+
+        //    foreach (var instruction in m_instructions)
+        //    {
+        //        if (instruction.Size != 0)
+        //        {
+        //            sb.Append($"0x{instruction.Address:X4}  ");
+        //        }
+
+        //        if (instruction == m_instructions.Last())
+        //        {
+        //            sb.Append(instruction.ToString());
+        //        }
+        //        else
+        //        {
+        //            sb.AppendLine(instruction.ToString());
+        //        }
+        //    }
+
+        //    return sb.ToString();
+        //}
 
         private void HandleMethod(MethodToken method)
         {
+            if (method.Inline)
+                return;
+
             m_instructions.Add(new LabelInstruction(this, method.Name));
             HandleBlock(method.Block);
-            // add jump ret
         }
 
         private void HandleBlock(BlockToken block)
@@ -109,7 +128,21 @@ namespace Simpu.Backend
 
         private void HandleMethodCall(MethodCallToken call)
         {
-            // this is going to be the fun part
+            var method = m_token.Methods.FirstOrDefault(m => m.Name == call.Name);
+            if (method == null)
+                throw new Exception($"Method {call.Name} not found");
+
+            if (method.Inline)
+            {
+                HandleBlock(method.Block);
+            }
+            else
+            {
+                // this is going to be the fun part
+                // for now we do not create a stack
+
+                m_instructions.Add(new JumpAbsoluteInstruction(this, call.Name));
+            }
         }
 
         private void HandleWhile(WhileToken @while)
@@ -136,7 +169,7 @@ namespace Simpu.Backend
                 HandleBlock(@while.Block);
             }
 
-            m_instructions.Add(new JumpInstruction(this, labelStart));
+            m_instructions.Add(new JumpAbsoluteInstruction(this, labelStart));
             m_instructions.Add(new LabelInstruction(this, labelEnd));
         }
 
@@ -175,11 +208,42 @@ namespace Simpu.Backend
             return offset;
         }
 
-        public bool TryGetAddressOfLabel(string label, out int address)
+        private void PrepareGlobalVariables()
         {
-            var li = m_instructions.FirstOrDefault(i => i is LabelInstruction l && l.Name == label);
-            address = li.Address;
-            return li != null;
+            foreach (var definition in m_token
+                .Definitions
+                .Where(d => d.InitialValue != null))
+            {
+                if (definition.InitialValue.IsConstant)
+                {
+                    if (definition.InitialValue.Constant.IsInteger)
+                    {
+                        m_instructions.Add(
+                            new MoveInstruction(
+                                this,
+                                definition.Name,
+                                definition.InitialValue.Constant.Integer.Value));
+                    }
+                    else
+                    {
+                        throw new NotImplementedException();
+                    }
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+            }
         }
+
+        //public bool TryGetAddressOfLabel(string label, out int address)
+        //{
+        //    var li = m_instructions.FirstOrDefault(i => i is LabelInstruction l && l.Name == label);
+        //    if (li == null)
+        //        throw new Exception($"Undefined reference to {label}");
+
+        //    address = li.Address;
+        //    return li != null;
+        //}
     }
 }

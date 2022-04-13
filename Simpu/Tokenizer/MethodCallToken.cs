@@ -13,5 +13,7 @@ namespace Simpu.Tokenizer
         public string Name { get; set; }
 
         public List<ValueToken> Parameter { get; set; }
+
+        public string Caller { get; set; }
     }
 }

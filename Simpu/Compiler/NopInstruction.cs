@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Simpu.Backend
+namespace Simpu.Compiler
 {
 
     public class NopInstruction : Instruction
     {
 
-        public NopInstruction(Executable executable)
-            : base(executable)
+        public NopInstruction(ObjectFile obj)
+            : base(obj)
         {
 
         }
@@ -24,7 +24,7 @@ namespace Simpu.Backend
             s.WriteByte(0x00);
         }
 
-        public override string ToString()
+        public override string ToOpCode()
         {
             return "NOP";
         }

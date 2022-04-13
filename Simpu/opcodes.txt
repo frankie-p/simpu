@@ -1,5 +1,8 @@
 ﻿0x00				nop			no operation - do nothing
 
 jumps
-0x01 OFFSET<4>  	jmp			jump to 4 byte offset from current address
+0x01 OFFSET		  	jmp			jump to address
+0x02 ADDRESS	  	jmr			jump to 4 byte offset from current address
 
+moves
+0x10 ADDRESS,VALUE	mov			move 4 byte value to 4 byte address

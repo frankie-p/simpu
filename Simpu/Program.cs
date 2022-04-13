@@ -1,4 +1,4 @@
-﻿using Simpu.Backend;
+﻿using Simpu.Compiler;
 using Simpu.Parser;
 using Simpu.Simulation;
 using Simpu.Tokenizer;
@@ -20,17 +20,18 @@ namespace simpu
             var token = FileParser.Parse(kernel);
 
             // compile tokens
-            var exe = Executable.Create(token);
+            var obj = ObjectFile.Compile(token);
 
-            Console.WriteLine(exe);
+            obj.PrintOpCodes();
 
-            using var memory = new MemoryStream(new byte[10000000]);
-            exe.Write(memory);
 
-            // write compiled kernel to memory
+            //using var memory = new MemoryStream(new byte[10000000]);
+            //exe.Write(memory);
 
-            var core = new Core(memory.ToArray(), 0);
-            core.Run();
+            //// write compiled kernel to memory
+
+            //var core = new Core(memory.ToArray(), 0);
+            //core.Run();
         }
     }
 }
