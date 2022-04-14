@@ -10,6 +10,8 @@ namespace Simpu.Compiler
     public enum SymbolTypes
     {
         Method,
-        Global
+        Global,
+        Absolute,
+        Relative,
     }
 }

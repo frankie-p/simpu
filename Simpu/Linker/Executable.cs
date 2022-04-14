@@ -20,8 +20,8 @@ namespace Simpu.Linker
         {
             var exe = new Executable(s);
 
-            exe.HandleGlobals(obj);
             exe.HandleInstructions(obj);
+            exe.HandleGlobals(obj);
             exe.ResolveReferences();
 
             return exe;
@@ -58,8 +58,18 @@ namespace Simpu.Linker
 
                 foreach (var value in reference.Value)
                 {
-                    Stream.Seek(value, SeekOrigin.Begin);
-                    Stream.Write(BitConverter.GetBytes(entry.Address), 0, 4);
+                    if (value.Type == SymbolTypes.Absolute)
+                    {
+                        Stream.Seek(value.Address, SeekOrigin.Begin);
+                        Stream.Write(BitConverter.GetBytes(entry.Address), 0, 4);
+                    }
+                    else
+                    {
+                        int diff = value.Address - entry.Address;
+
+                        Stream.Seek(value.Address, SeekOrigin.Begin);
+                        Stream.Write(BitConverter.GetBytes(diff), 0, 4);
+                    }
                 }
             }
         }

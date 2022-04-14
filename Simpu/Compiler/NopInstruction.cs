@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace Simpu.Compiler
 {
@@ -22,11 +17,6 @@ namespace Simpu.Compiler
         public override void Write(Stream s, SymbolTable symbols)
         {
             s.WriteByte(0x00);
-        }
-
-        public override string ToOpCode()
-        {
-            return "NOP";
         }
     }
 }

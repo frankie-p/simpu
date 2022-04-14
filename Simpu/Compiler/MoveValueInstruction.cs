@@ -24,14 +24,9 @@ namespace Simpu.Compiler
         public override void Write(Stream s, SymbolTable symbols)
         {
             s.WriteByte(0x10);
-            symbols.Reference(MoveAddress, (int)s.Position);
+            symbols.Reference(MoveAddress, (int)s.Position, SymbolTypes.Absolute);
             s.Write(BitConverter.GetBytes(0), 0, 4);
             s.Write(BitConverter.GetBytes(Value), 0, 4);
-        }
-
-        public override string ToOpCode()
-        {
-            return $"MOV {MoveAddress},{Value}";
         }
     }
 }

@@ -25,10 +25,5 @@ namespace Simpu.Compiler
         {
             table.Entry(Name, (int)s.Position, SymbolTypes.Method);
         }
-
-        public override string ToOpCode()
-        {
-            return $"{Name}:";
-        }
     }
 }

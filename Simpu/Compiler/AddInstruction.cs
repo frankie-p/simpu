@@ -24,11 +24,6 @@ namespace Simpu.Compiler
 
         public override int Size => 7;
 
-        public override string ToOpCode()
-        {
-            return $"ADD %{Register},{Value}";
-        }
-
         public override void Write(Stream s, SymbolTable symbols)
         {
             s.WriteByte(0x20);

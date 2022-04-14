@@ -53,22 +53,6 @@ namespace Simpu.Compiler
             return obj;
         }
 
-        public void PrintOpCodes()
-        {
-            foreach (var instruction in m_instructions)
-            {
-                if (instruction is LabelInstruction)
-                {
-                    ConsoleHelper.WriteLineColored(instruction.ToOpCode(), ConsoleColor.DarkGray);
-                }
-                else
-                {
-                    Console.Write("  ");
-                    Console.WriteLine(instruction.ToOpCode());
-                }
-            }
-        }
-
         private void HandleMethod(MethodToken method)
         {
             if (method.Inline)
@@ -182,7 +166,7 @@ namespace Simpu.Compiler
                 HandleBlock(@while.Block);
             }
 
-            m_instructions.Add(new JumpAbsoluteInstruction(this, labelStart));
+            m_instructions.Add(new JumpRelativeAddress(this, labelStart));
             m_instructions.Add(new LabelInstruction(this, labelEnd));
         }
 

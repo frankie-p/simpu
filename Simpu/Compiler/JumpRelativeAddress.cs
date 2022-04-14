@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 namespace Simpu.Compiler
 {
 
-    public class JumpAbsoluteInstruction : Instruction
+    public class JumpRelativeAddress : Instruction
     {
 
-        public JumpAbsoluteInstruction(ObjectFile obj, string label)
+        public JumpRelativeAddress(ObjectFile obj, string label)
             : base(obj)
         {
             Label = label;
@@ -23,8 +23,8 @@ namespace Simpu.Compiler
 
         public override void Write(Stream s, SymbolTable symbols)
         {
-            s.WriteByte(0x01);
-            symbols.Reference(Label, (int)s.Position, SymbolTypes.Absolute);
+            s.WriteByte(0x02);
+            symbols.Reference(Label, (int)s.Position, SymbolTypes.Relative);
             s.Write(BitConverter.GetBytes(0), 0, 4);
         }
     }

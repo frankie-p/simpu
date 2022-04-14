@@ -13,8 +13,6 @@ namespace Simpu.Linker
     {
         public static void Print(Executable exe, bool demangle)
         {
-            
-
             exe.Stream.Seek(0, SeekOrigin.Begin);
 
             while (exe.Stream.Position < exe.Stream.Length)
@@ -30,7 +28,10 @@ namespace Simpu.Linker
                         Nop();
                         break;
                     case 0x01:
-                        Jump(exe, demangle);
+                        JumpAbsolute(exe, demangle);
+                        break;
+                    case 0x02:
+                        JumpRelativeBack(exe, demangle);
                         break;
                     case 0x10:
                         MoveValueToAddress(exe, demangle);
@@ -75,23 +76,28 @@ namespace Simpu.Linker
         private static void MoveRegisterToAddress(Executable exe, bool demangle)
         {
             var register = GetRegister(exe);
-            var address = GetAddress(exe, demangle);
+            var address = GetAbsoluteAddress(exe, demangle);
             Console.WriteLine($"  MOV {register},{address}");
         }
 
         private static void MoveAddressToRegister(Executable exe, bool demangle)
         {
-            Console.WriteLine($"  MOV {GetAddress(exe, demangle)},{GetRegister(exe)}");
+            Console.WriteLine($"  MOV {GetAbsoluteAddress(exe, demangle)},{GetRegister(exe)}");
         }
 
         private static void MoveValueToAddress(Executable exe, bool demangle)
         {
-            Console.WriteLine($"  MOV {GetAddress(exe, demangle)},{GetValue(exe)}");
+            Console.WriteLine($"  MOV {GetAbsoluteAddress(exe, demangle)},{GetValue(exe)}");
         }
 
-        private static void Jump(Executable exe, bool demangle)
+        private static void JumpRelativeBack(Executable exe, bool demangle)
         {
-            Console.WriteLine($"  JMP {GetAddress(exe, demangle)}");
+            Console.WriteLine($"  JMB {GetRelativeAddress(exe, demangle)}");
+        }
+
+        private static void JumpAbsolute(Executable exe, bool demangle)
+        {
+            Console.WriteLine($"  JMP {GetAbsoluteAddress(exe, demangle)}");
         }
 
         private static void Nop()
@@ -104,7 +110,7 @@ namespace Simpu.Linker
             ConsoleHelper.WriteColored($"0x{exe.Stream.Position.ToString("X").PadLeft(4, '0')}  ", ConsoleColor.White);
         }
 
-        private static string GetAddress(Executable exe, bool demangle)
+        private static string GetAbsoluteAddress(Executable exe, bool demangle)
         {
             var buffer = new byte[4];
             exe.Stream.Read(buffer, 0, 4);
@@ -113,6 +119,20 @@ namespace Simpu.Linker
             return demangle
                 ? Demangle(exe, address)
                 : $"0x{address.ToString("X").PadLeft(4, '0')}";
+        }
+
+        private static string GetRelativeAddress(Executable exe, bool demangle)
+        {
+            var buffer = new byte[4];
+            var position = (int)exe.Stream.Position;            
+            
+            exe.Stream.Read(buffer, 0, 4);
+
+            var offset = BitConverter.ToInt32(buffer, 0);
+
+            return demangle
+                ? Demangle(exe, position - offset)
+                : $"0x{offset.ToString("X").PadLeft(4, '0')}";
         }
 
         private static string GetRegister(Executable exe)
