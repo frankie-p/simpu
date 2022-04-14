@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Simpu.Compiler
 {
 
-    public enum Registers : short
+    public enum Registers : byte
     {
         AX,
         BX,

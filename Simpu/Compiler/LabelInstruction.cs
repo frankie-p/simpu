@@ -8,18 +8,16 @@ using System.Threading.Tasks;
 namespace Simpu.Compiler
 {
 
-    public class LabelInstruction : Instruction
+    public class LabelInstruction : InstructionBase
     {
 
         public LabelInstruction(ObjectFile obj, string name)
-            : base(obj)
+            : base(obj, 0)
         {
             Name = name;
         }
 
         public string Name { get; }
-
-        public override int Size => 0;
 
         public override void Write(Stream s, SymbolTable table)
         {

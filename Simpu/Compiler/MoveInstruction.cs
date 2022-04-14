@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 namespace Simpu.Compiler
 {
 
-    public abstract class MoveInstruction : Instruction
+    public abstract class MoveInstruction : InstructionBase
     {
 
-        public MoveInstruction(ObjectFile obj, string moveAddress)
-            : base(obj)
+        public MoveInstruction(ObjectFile obj, string moveAddress, Instructions instruction)
+            : base(obj, instruction)
         {
-            MoveAddress = moveAddress;
+            Label = moveAddress;
         }
 
-        public string MoveAddress { get; }
+        public string Label { get; }
     }
 }

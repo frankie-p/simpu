@@ -25,5 +25,23 @@ namespace Simpu.Compiler
 
             References[label].Add(new SymbolEntry(address, type));
         }
+
+        public void Distinct()
+        {
+            var removes = new List<string>();
+
+            foreach (var entry in Entries.Keys)
+            {
+                if (!References.ContainsKey(entry))
+                {
+                    removes.Add(entry);
+                }
+            }
+
+            foreach (var remove in removes)
+            {
+                Entries.Remove(remove);
+            }
+        }
     }
 }

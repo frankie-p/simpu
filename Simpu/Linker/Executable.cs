@@ -20,10 +20,11 @@ namespace Simpu.Linker
         {
             var exe = new Executable(s);
 
+#warning here we would add some instructions for preparing the stack
             exe.HandleInstructions(obj);
             exe.HandleGlobals(obj);
+            exe.Symbols.Distinct();
             exe.ResolveReferences();
-
             return exe;
         }
 
@@ -37,7 +38,7 @@ namespace Simpu.Linker
         {
             foreach (var global in obj.Globals)
             {
-                Symbols.Entry(global.Key, GlobalsSize, SymbolTypes.Global);
+                Symbols.Entry(global.Key, GlobalsSize + (int)Stream.Length, SymbolTypes.Global);
                 GlobalsSize += global.Value;
             }
         }
@@ -61,14 +62,14 @@ namespace Simpu.Linker
                     if (value.Type == SymbolTypes.Absolute)
                     {
                         Stream.Seek(value.Address, SeekOrigin.Begin);
-                        Stream.Write(BitConverter.GetBytes(entry.Address), 0, 4);
+                        Stream.Write(BitConverter.GetBytes((ushort)entry.Address), 0, 2);
                     }
                     else
                     {
-                        int diff = value.Address - entry.Address;
+                        ushort diff = (ushort)(value.Address - entry.Address);
 
                         Stream.Seek(value.Address, SeekOrigin.Begin);
-                        Stream.Write(BitConverter.GetBytes(diff), 0, 4);
+                        Stream.Write(BitConverter.GetBytes(diff), 0, 2);
                     }
                 }
             }

@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 namespace Simpu.Compiler
 {
 
-    public class AddInstruction : Instruction
+    public class AddInstruction : InstructionBase
     {
 
-        public AddInstruction(ObjectFile obj, Registers register, int value)
-            : base(obj)
+        public AddInstruction(ObjectFile obj, Registers register, ushort value)
+            : base(obj, Instructions.ARITHMETIC_ADD)
         {
             Register = register;
             Value = value;
@@ -20,16 +20,13 @@ namespace Simpu.Compiler
 
         public Registers Register { get; }
 
-        public int Value { get; }
-
-        public override int Size => 7;
+        public ushort Value { get; }
 
         public override void Write(Stream s, SymbolTable symbols)
         {
-            s.WriteByte(0x20);
-            s.Write(BitConverter.GetBytes((short)Register), 0, 2);
-            s.Write(BitConverter.GetBytes(Value), 0, 4);
-            
+            base.Write(s, symbols);
+            base.WriteRegister(s, Register);
+            s.Write(BitConverter.GetBytes(Value), 0, 2);
         }
     }
 }

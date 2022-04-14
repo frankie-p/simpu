@@ -11,7 +11,7 @@ namespace Simpu.Compiler
 
     public class ObjectFile
     {
-        private readonly List<Instruction> m_instructions = new();
+        private readonly List<InstructionBase> m_instructions = new();
         private readonly RegisterManager m_registers = new();
         private readonly FileToken m_token;
 
@@ -24,30 +24,17 @@ namespace Simpu.Compiler
 
         public Dictionary<string, int> Globals { get; } = new();
 
-        public IEnumerable<Instruction> Instructions => m_instructions;
+        public IEnumerable<InstructionBase> Instructions => m_instructions;
 
         public static ObjectFile Compile(FileToken token)
         {
             var obj = new ObjectFile(token);
 
-            obj.PrepareGlobalVariables();
-
-            // jump to main
-            //obj.m_instructions.Add(new JumpAbsoluteInstruction(obj, "main"));
+            obj.HandleGlobals();
 
             foreach (var method in token.Methods)
             {
                 obj.HandleMethod(method);
-            }
-
-            // apply addresses
-
-            var address = 0;
-
-            foreach (var instruction in obj.m_instructions)
-            {
-                instruction.Address = address;
-                address += instruction.Size;
             }
 
             return obj;
@@ -170,7 +157,7 @@ namespace Simpu.Compiler
             m_instructions.Add(new LabelInstruction(this, labelEnd));
         }
 
-        private void PrepareGlobalVariables()
+        private void HandleGlobals()
         {
             foreach (var definition in m_token
                 .Definitions
@@ -186,7 +173,7 @@ namespace Simpu.Compiler
                             new MoveValueInstruction(
                                 this,
                                 definition.Name,
-                                definition.InitialValue.Constant.Integer.Value));
+                                (byte)definition.InitialValue.Constant.Integer.Value));
                     }
                     else
                     {

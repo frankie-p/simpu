@@ -11,22 +11,19 @@ namespace Simpu.Compiler
     public class MoveValueInstruction : MoveInstruction
     {
 
-        public MoveValueInstruction(ObjectFile obj, string moveAddress, int value)
-            : base(obj, moveAddress)
+        public MoveValueInstruction(ObjectFile obj, string label, byte value)
+            : base(obj, label, Instructions.MOVE_ADDRESS_VALUE)
         {
             Value = value;
         }
 
-        public int Value { get; }
-
-        public override int Size => 9;
+        public byte Value { get; }
 
         public override void Write(Stream s, SymbolTable symbols)
         {
-            s.WriteByte(0x10);
-            symbols.Reference(MoveAddress, (int)s.Position, SymbolTypes.Absolute);
-            s.Write(BitConverter.GetBytes(0), 0, 4);
-            s.Write(BitConverter.GetBytes(Value), 0, 4);
+            base.Write(s, symbols);
+            s.WriteByte(Value);
+            base.WriteAddressPlaceholder(s, symbols, Label, SymbolTypes.Absolute);
         }
     }
 }

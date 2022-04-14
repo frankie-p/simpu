@@ -17,32 +17,35 @@ namespace Simpu.Linker
 
             while (exe.Stream.Position < exe.Stream.Length)
             {
+                if (exe.Stream.Position % 4 != 0)
+                    throw new BadImageFormatException();
+
                 PrintLabel(exe, demangle);
                 PrintAddress(exe);
 
-                var instruction = exe.Stream.ReadByte();
+                var instruction = (Instructions)exe.Stream.ReadByte();
 
                 switch (instruction)
                 {
-                    case 0x00:
-                        Nop();
+                    case Instructions.NOP:
+                        Nop(exe);
                         break;
-                    case 0x01:
+                    case Instructions.JUMP_ABSOLUTE:
                         JumpAbsolute(exe, demangle);
                         break;
-                    case 0x02:
+                    case Instructions.JUMP_RELATIVE_BACK:
                         JumpRelativeBack(exe, demangle);
                         break;
-                    case 0x10:
+                    case Instructions.MOVE_ADDRESS_VALUE:
                         MoveValueToAddress(exe, demangle);
                         break;
-                    case 0x11:
+                    case Instructions.MOVE_ADDRESS_REG:
                         MoveAddressToRegister(exe, demangle);
                         break;
-                    case 0x12:
+                    case Instructions.MOVE_REG_ADDRESS:
                         MoveRegisterToAddress(exe, demangle);
                         break;
-                    case 0x20:
+                    case Instructions.ARITHMETIC_ADD:
                         Add(exe);
                         break;
                     default:
@@ -70,39 +73,50 @@ namespace Simpu.Linker
 
         private static void Add(Executable exe)
         {
-            Console.WriteLine($"  ADD {GetRegister(exe)},{GetValue(exe)}");
+            Console.WriteLine($"  ADD {GetRegister(exe)},{GetShortValue(exe)}");
         }
 
         private static void MoveRegisterToAddress(Executable exe, bool demangle)
         {
-            var register = GetRegister(exe);
-            var address = GetAbsoluteAddress(exe, demangle);
-            Console.WriteLine($"  MOV {register},{address}");
+            var reg = GetRegister(exe);
+            Console.WriteLine($"  MOV {GetAbsoluteAddress(exe, demangle)},{reg}");
         }
 
         private static void MoveAddressToRegister(Executable exe, bool demangle)
         {
-            Console.WriteLine($"  MOV {GetAbsoluteAddress(exe, demangle)},{GetRegister(exe)}");
+            var reg = GetRegister(exe);
+            Console.WriteLine($"  MOV {GetAbsoluteAddress(exe, demangle)},{reg}");
         }
 
         private static void MoveValueToAddress(Executable exe, bool demangle)
         {
-            Console.WriteLine($"  MOV {GetAbsoluteAddress(exe, demangle)},{GetValue(exe)}");
+            var value = GetByteValue(exe);
+            Console.WriteLine($"  MOV {GetAbsoluteAddress(exe, demangle)},{value}");
         }
 
         private static void JumpRelativeBack(Executable exe, bool demangle)
         {
+            ReadPad(exe);
             Console.WriteLine($"  JMB {GetRelativeAddress(exe, demangle)}");
         }
 
         private static void JumpAbsolute(Executable exe, bool demangle)
         {
+            ReadPad(exe);
             Console.WriteLine($"  JMP {GetAbsoluteAddress(exe, demangle)}");
         }
 
-        private static void Nop()
+        private static void Nop(Executable exe)
         {
+            ReadPad(exe);
+            ReadPad(exe);
+            ReadPad(exe);
             Console.WriteLine($"  NOP");
+        }
+
+        private static void ReadPad(Executable exe)
+        {
+            exe.Stream.ReadByte();   
         }
 
         private static void PrintAddress(Executable exe)
@@ -112,9 +126,9 @@ namespace Simpu.Linker
 
         private static string GetAbsoluteAddress(Executable exe, bool demangle)
         {
-            var buffer = new byte[4];
-            exe.Stream.Read(buffer, 0, 4);
-            var address = BitConverter.ToInt32(buffer, 0);
+            var buffer = new byte[2];
+            exe.Stream.Read(buffer, 0, 2);
+            var address = BitConverter.ToUInt16(buffer, 0);
 
             return demangle
                 ? Demangle(exe, address)
@@ -123,12 +137,12 @@ namespace Simpu.Linker
 
         private static string GetRelativeAddress(Executable exe, bool demangle)
         {
-            var buffer = new byte[4];
+            var buffer = new byte[2];
             var position = (int)exe.Stream.Position;            
             
-            exe.Stream.Read(buffer, 0, 4);
+            exe.Stream.Read(buffer, 0, 2);
 
-            var offset = BitConverter.ToInt32(buffer, 0);
+            var offset = BitConverter.ToUInt16(buffer, 0);
 
             return demangle
                 ? Demangle(exe, position - offset)
@@ -137,17 +151,20 @@ namespace Simpu.Linker
 
         private static string GetRegister(Executable exe)
         {
-            var buffer = new byte[2];
-            exe.Stream.Read(buffer, 0, 2);
-            var register = (Registers)BitConverter.ToInt16(buffer, 0);
+            var register = (Registers)exe.Stream.ReadByte();
             return $"%{register}";
         }
 
-        private static string GetValue(Executable exe)
+        private static string GetByteValue(Executable exe)
         {
-            var buffer = new byte[4];
-            exe.Stream.Read(buffer, 0, 4);
-            return BitConverter.ToInt32(buffer, 0).ToString();
+            return exe.Stream.ReadByte().ToString();
+        }
+
+        private static string GetShortValue(Executable exe)
+        {
+            var buffer = new byte[2];
+            exe.Stream.Read(buffer, 0, 2);
+            return BitConverter.ToUInt16(buffer, 0).ToString();
         }
 
         private static string Demangle(Executable exe, int address)

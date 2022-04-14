@@ -3,20 +3,22 @@
 namespace Simpu.Compiler
 {
 
-    public class NopInstruction : Instruction
+    public class NopInstruction : InstructionBase
     {
 
         public NopInstruction(ObjectFile obj)
-            : base(obj)
+            : base(obj, Instructions.NOP)
         {
 
         }
 
-        public override int Size => 1;
-
         public override void Write(Stream s, SymbolTable symbols)
         {
-            s.WriteByte(0x00);
+            base.Write(s, symbols);
+
+            base.WritePad(s);
+            base.WritePad(s);
+            base.WritePad(s);
         }
     }
 }
