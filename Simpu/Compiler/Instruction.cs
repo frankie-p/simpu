@@ -22,7 +22,7 @@ namespace Simpu.Compiler
 
         public abstract int Size { get; }
 
-        public abstract void Write(Stream s);
+        public abstract void Write(Stream s, SymbolTable symbols);
 
         public abstract string ToOpCode();
     }

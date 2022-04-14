@@ -22,6 +22,10 @@ namespace Simpu.Compiler
             m_token = token;
         }
 
+        public Dictionary<string, int> Globals { get; } = new();
+
+        public IEnumerable<Instruction> Instructions => m_instructions;
+
         public static ObjectFile Compile(FileToken token)
         {
             var obj = new ObjectFile(token);
@@ -29,7 +33,7 @@ namespace Simpu.Compiler
             obj.PrepareGlobalVariables();
 
             // jump to main
-            obj.m_instructions.Add(new JumpAbsoluteInstruction(obj, "main"));
+            //obj.m_instructions.Add(new JumpAbsoluteInstruction(obj, "main"));
 
             foreach (var method in token.Methods)
             {
@@ -182,41 +186,6 @@ namespace Simpu.Compiler
             m_instructions.Add(new LabelInstruction(this, labelEnd));
         }
 
-        public int GetAddressOffset(Instruction from, string label)
-        {
-            var labelFound = false;
-            var selfFound = false;
-            var offset = 0;
-
-            foreach (var instruction in m_instructions)
-            {
-                if (instruction is LabelInstruction li && li.Name == label)
-                {
-                    if (selfFound)
-                        break;
-
-                    labelFound = true;
-                }
-                else if (instruction == from)
-                {
-                    if (labelFound)
-                    {
-                        offset *= -1;
-                        break;
-                    }
-
-                    selfFound = true;
-                    offset += instruction.Size;
-                }
-                else if (labelFound && selfFound)
-                {
-                    offset += instruction.Size;
-                }
-            }
-
-            return offset;
-        }
-
         private void PrepareGlobalVariables()
         {
             foreach (var definition in m_token
@@ -227,6 +196,8 @@ namespace Simpu.Compiler
                 {
                     if (definition.InitialValue.Constant.IsInteger)
                     {
+                        Globals.Add(definition.Name, 4);
+
                         m_instructions.Add(
                             new MoveValueInstruction(
                                 this,
@@ -244,15 +215,5 @@ namespace Simpu.Compiler
                 }
             }
         }
-
-        //public bool TryGetAddressOfLabel(string label, out int address)
-        //{
-        //    var li = m_instructions.FirstOrDefault(i => i is LabelInstruction l && l.Name == label);
-        //    if (li == null)
-        //        throw new Exception($"Undefined reference to {label}");
-
-        //    address = li.Address;
-        //    return li != null;
-        //}
     }
 }

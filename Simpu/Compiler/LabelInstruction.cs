@@ -21,9 +21,9 @@ namespace Simpu.Compiler
 
         public override int Size => 0;
 
-        public override void Write(Stream s)
+        public override void Write(Stream s, SymbolTable table)
         {
-
+            table.Entry(Name, (int)s.Position, SymbolTypes.Method);
         }
 
         public override string ToOpCode()

@@ -7,7 +7,8 @@ inline void increment_counter()
 
 int main()
 {
-	increment_counter();
-
-	while (1);
+	while (1)
+	{
+		increment_counter();
+	}
 }

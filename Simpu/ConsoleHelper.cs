@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Simpu
 {
@@ -12,9 +8,15 @@ namespace Simpu
 
         public static void WriteLineColored(string value, ConsoleColor foreground)
         {
+            WriteColored(value, foreground);
+            Console.WriteLine();
+        }
+
+        public static void WriteColored(string value, ConsoleColor foreground)
+        {
             var restore = Console.ForegroundColor;
             Console.ForegroundColor = foreground;
-            Console.WriteLine(value);
+            Console.Write(value);
             Console.ForegroundColor = restore;
         }
     }

@@ -29,7 +29,7 @@ namespace Simpu.Compiler
             return $"ADD %{Register},{Value}";
         }
 
-        public override void Write(Stream s)
+        public override void Write(Stream s, SymbolTable symbols)
         {
             s.WriteByte(0x20);
             s.Write(BitConverter.GetBytes((short)Register), 0, 2);

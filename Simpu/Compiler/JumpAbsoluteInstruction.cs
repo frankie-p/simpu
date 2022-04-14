@@ -10,34 +10,27 @@ namespace Simpu.Compiler
 
     public class JumpAbsoluteInstruction : Instruction
     {
-        private readonly string m_label;
 
         public JumpAbsoluteInstruction(ObjectFile obj, string label)
             : base(obj)
         {
-            m_label = label;
+            Label = label;
         }
+
+        public string Label { get; }
 
         public override int Size => 5;
 
-        public override void Write(Stream s)
+        public override void Write(Stream s, SymbolTable symbols)
         {
-            var offset = Obj.GetAddressOffset(this, m_label);
-
             s.WriteByte(0x01);
-            s.Write(BitConverter.GetBytes(offset), 0, 4);
+            symbols.Reference(Label, (int)s.Position);
+            s.Write(BitConverter.GetBytes(0), 0, 4);
         }
 
         public override string ToOpCode()
         {
-            //string absolute = "<NUL>";
-
-            //if (Obj.TryGetAddressOfLabel(m_label, out var address))
-            //{
-            //    absolute = $"0x{address:X4}";
-            //}
-
-            return $"JMP {m_label}";
+            return $"JMP {Label}";
         }
     }
 }

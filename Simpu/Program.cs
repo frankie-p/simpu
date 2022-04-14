@@ -1,4 +1,5 @@
 ﻿using Simpu.Compiler;
+using Simpu.Linker;
 using Simpu.Parser;
 using Simpu.Simulation;
 using Simpu.Tokenizer;
@@ -6,7 +7,7 @@ using System;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace simpu
+namespace Simpu
 {
 
     public class Program
@@ -22,8 +23,15 @@ namespace simpu
             // compile tokens
             var obj = ObjectFile.Compile(token);
 
-            obj.PrintOpCodes();
 
+            using var ms = new MemoryStream();
+            var exe = Executable.Link(obj, ms);
+
+            ConsoleHelper.WriteLineColored("mangled:", ConsoleColor.Cyan);
+            ExecutableReader.Print(exe, false);
+
+            ConsoleHelper.WriteLineColored("demangled:", ConsoleColor.Cyan);
+            ExecutableReader.Print(exe, true);
 
             //using var memory = new MemoryStream(new byte[10000000]);
             //exe.Write(memory);

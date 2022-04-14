@@ -20,12 +20,11 @@ namespace Simpu.Compiler
 
         public override int Size => 7;
 
-        public override void Write(Stream s)
+        public override void Write(Stream s, SymbolTable symbols)
         {
-            var offset = Obj.GetAddressOffset(this, MoveAddress);
-
             s.WriteByte(0x12);
-            s.Write(BitConverter.GetBytes(offset), 0, 4);
+            symbols.Reference(MoveAddress, (int)s.Position);
+            s.Write(BitConverter.GetBytes(0), 0, 4);
             s.Write(BitConverter.GetBytes((short)Register), 0, 2);
         }
 
